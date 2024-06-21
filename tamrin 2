@@ -1,0 +1,112 @@
+class Node:
+    def init(self, coeff=0, pow=0):
+        self.coeff = coeff
+        self.pow = pow
+        self.next = None
+
+class Polynomial:
+    def init(self):
+        self.head = None
+
+    def insert(self, coeff, pow):
+        new_node = Node(coeff, pow)
+        if not self.head or self.head.pow < pow:
+            new_node.next = self.head
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next and current.next.pow > pow:
+                current = current.next
+            new_node.next = current.next
+            current.next = new_node
+
+    def display(self):
+        current = self.head
+        result = []
+        while current:
+            result.append(f"{current.coeff}x^{current.pow}")
+            current = current.next
+        return " + ".join(result)
+
+    def add(self, poly):
+        p1 = self.head
+        p2 = poly.head
+        result = Polynomial()
+        
+        while p1 and p2:
+            if p1.pow == p2.pow:
+                result.insert(p1.coeff + p2.coeff, p1.pow)
+                p1 = p1.next
+                p2 = p2.next
+            elif p1.pow > p2.pow:
+                result.insert(p1.coeff, p1.pow)
+                p1 = p1.next
+            else:
+                result.insert(p2.coeff, p2.pow)
+                p2 = p2.next
+        
+        while p1:
+            result.insert(p1.coeff, p1.pow)
+            p1 = p1.next
+
+        while p2:
+            result.insert(p2.coeff, p2.pow)
+            p2 = p2.next
+        
+        return result
+
+    def multiply(self, poly):
+        p1 = self.head
+        result = Polynomial()
+        
+        while p1:
+            p2 = poly.head
+            temp_poly = Polynomial()
+            while p2:
+                temp_poly.insert(p1.coeff * p2.coeff, p1.pow + p2.pow)
+                p2 = p2.next
+            result = result.add(temp_poly)
+            p1 = p1.next
+        
+        return result
+
+
+def main():
+    poly1 = Polynomial()
+    poly2 = Polynomial()
+
+    while True:
+        print("1) Insert a polynomial")
+        print("2) Add two polynomials")
+        print("3) Multiply two polynomials")
+        print("4) Display a polynomial")
+        print("5) Exit")
+        choice = int(input("Enter your choice: "))
+
+        if choice == 1:
+            coeff = int(input("Enter coefficient: "))
+            pow = int(input("Enter power: "))
+            which = int(input("Enter 1 for first polynomial or 2 for second polynomial: "))
+            if which == 1:
+                poly1.insert(coeff, pow)
+            else:
+                poly2.insert(coeff, pow)
+        elif choice == 2:
+            result = poly1.add(poly2)
+            print("Result of addition:", result.display())
+        elif choice == 3:
+            result = poly1.multiply(poly2)
+            print("Result of multiplication:", result.display())
+        elif choice == 4:
+            which = int(input("Enter 1 for first polynomial or 2 for second polynomial: "))
+            if which == 1:
+                print("First polynomial:", poly1.display())
+            else:
+                print("Second polynomial:", poly2.display())
+        elif choice == 5:
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if name == "main":
+    main()
